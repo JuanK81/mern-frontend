@@ -23,10 +23,9 @@ const PlaceItem = (props) => {
         footerClass="place-item__modal-actions"
         footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
       >
-          <div className="map-container">
-              <Map />
-              {/* <h2>The Map</h2> */}
-          </div>
+        <div className="map-container">
+          <Map lat={props.coordinates.lat} lng={props.coordinates.lng} zoom={13}/>
+        </div>
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
@@ -39,7 +38,9 @@ const PlaceItem = (props) => {
             <p>{props.description}</p>
           </div>
           <div className="place-item__actions">
-            <Button inverse onClick={openMapHandler}>VIEW ON MAP </Button>
+            <Button inverse onClick={openMapHandler}>
+              VIEW ON MAP{" "}
+            </Button>
             <Button to={`/places/${props.id}`}>EDIT </Button>
             <Button danger>DELETE </Button>
           </div>

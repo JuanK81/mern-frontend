@@ -18,17 +18,17 @@ const Map = (props) => {
       style={props.style}
     >
       <MapContainer
-        // className="leaflet-container"
         style={{ height: 320, width: 625 }}
-        center={[39.56739530702399, 2.6482925241340376]}
-        zoom={13}
+        center={[props.lat, props.lng]}
+        zoom={props.zoom}
+        // zoom={13}
         scrollWheelZoom={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[39.56739530702399, 2.6482925241340376]}>
+        <Marker position={[props.lat, props.lng]}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>
