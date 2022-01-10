@@ -1,7 +1,12 @@
 import React from 'react';
 
+import Input from '../../shared/components/FormElements/Input';
+import './NewPlace.css'
+
 const NewPLace = () => {
-    return <h2>New Place!!</h2>
+    return <form className='place-form'>
+        <Input type='text' label='Title' element='input' validators={[]} errorText='Please enter a valid value.'/>
+    </form>
 };
 
 export default NewPLace
