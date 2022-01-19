@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, Fragment } from 'react';
 
 import Input from '../../shared/components/FormElements/Input';
 import {
@@ -78,6 +78,10 @@ const Auth = () => {
         });
 
         const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.message)
+        }
+
         console.log(responseData);
         setIsLoading(false);
         auth.login();
@@ -89,49 +93,56 @@ const Auth = () => {
     }
   };
 
+  const errorHandler = () => {
+    setError(null)
+  };
+
   return (
-    <Card className="authentication">
-      {isLoading && <LoadingSpinner asOverlay />}
-      <h2>Login Required</h2>
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLoginMode && (
+    <Fragment>
+      <ErrorModal error={error} onClear={errorHandler} />
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>Login Required</h2>
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              id="name"
+              type="text"
+              label="User Name"
+              element="input"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter your user name."
+              onInput={inputHandler}
+            />
+          )}
           <Input
-            id="name"
-            type="text"
-            label="User Name"
+            id="email"
+            type="email"
+            label="E-Mail"
             element="input"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter your user name."
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Please enter a valid Email."
             onInput={inputHandler}
           />
-        )}
-        <Input
-          id="email"
-          type="email"
-          label="E-Mail"
-          element="input"
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="Please enter a valid Email."
-          onInput={inputHandler}
-        />
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          element="input"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid password."
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? 'LOGIN' : 'SIGNUP'}
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            element="input"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid password."
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? 'LOGIN' : 'SIGNUP'}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          SWITCH TO {isLoginMode ? 'SIGNUP' : 'LOGIN'}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        SWITCH TO {isLoginMode ? 'SIGNUP' : 'LOGIN'}
-      </Button>
-    </Card>
+      </Card>
+    </Fragment>
   );
 };
 
