@@ -4,55 +4,59 @@ export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
-  const activeHttpReques = useRef([])
+  const activeHttpRequets = useRef([]);
 
-  const sendRequest = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
-    
-    setIsLoading(true);
+  const sendRequest = useCallback(
+    async (url, method = 'GET', body = null, headers = {}) => {
+      setIsLoading(true);
 
-    const httpAbortCtrl = new AbortController();
-    activeHttpReques.current.push(httpAbortCtrl);
+      const httpAbortCtrl = new AbortController();
+      activeHttpRequets.current.push(httpAbortCtrl);
 
-
-    try {
+      try {
         const response = await fetch(url, {
-      method,
-      body,
-      headers,
-      signal: httpAbortCtrl.signal
-    });
+          method,
+          body,
+          headers,
+          signal: httpAbortCtrl.signal,
+        });
 
-    const responseData = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
+        const responseData = await response.json();
 
-    return responseData;
+        activeHttpRequets.current = activeHttpRequets.current.filter(
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
+        );
 
-    } catch (err) {
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+
+        setIsLoading(false);
+        return responseData;
+      } catch (err) {
         setError(err.message);
-    }
-
-    setIsLoading(false);
-
-  }, []);
+        setIsLoading(false);
+        throw err;
+      }
+    },
+    []
+  );
 
   const clearError = () => {
-      setError(null);
-  }
+    setError(null);
+  };
 
   useEffect(() => {
-      //cleanup function
-      return () => {
-        activeHttpReques.current.forEach(abortCtrl => abortCtrl.abort());
-      };
-  }, [])
+    //cleanup function
+    return () => {
+      activeHttpRequets.current.forEach((abortCtrl) => abortCtrl.abort());
+    };
+  }, []);
 
   return {
-      isLoading,
-      error,
-      sendRequest,
-      clearError
-  }
+    isLoading,
+    error,
+    sendRequest,
+    clearError,
+  };
 };
