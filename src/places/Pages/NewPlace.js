@@ -57,6 +57,7 @@ const NewPLace = () => {
     }
   };
 
+  console.log('clg formstate inputs', formState.inputs);
   return (
     <Fragment>
       <ErrorModal error={error} onClear={clearError} />
